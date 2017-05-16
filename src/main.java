@@ -20,7 +20,7 @@ public class main extends ListenerAdapter{
             throws LoginException, RateLimitedException, InterruptedException
     {
 		jda = new JDABuilder(AccountType.BOT).setToken("MzExOTU3NTA2MDYwNDUxODQ0.C_j2UA.Kw_S88wmdzUD32AeNMIIjsAmiMk").buildBlocking();
-		
+		 
 		MessageListenerActions messageListener = new MessageListenerActions(jda);
 		messageListener.addListener();
 		 
