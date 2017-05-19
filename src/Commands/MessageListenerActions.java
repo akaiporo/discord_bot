@@ -1,4 +1,6 @@
 package Commands;
+import java.io.IOException;
+
 import net.dv8tion.jda.client.events.call.CallCreateEvent;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -70,6 +72,18 @@ public class MessageListenerActions extends ListenerAdapter{
         if(relou){
 		    this.insulterSora(event, message);
          }
+     
+        if(event.getMessage().getContent().contains(String.format("@%s cherche : ", botname)) && !event.getAuthor().getName().equals(botName)){
+        	String search = message.substring(12+botname.length());
+        	System.out.println(search);
+        	try {
+				YoutubeActions ytActions = new YoutubeActions();
+				event.getChannel().sendMessage(ytActions.search(search)).complete();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
     }
 	
 	private void voiceConnection(MessageReceivedEvent event, String condition){
