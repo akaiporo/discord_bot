@@ -26,11 +26,9 @@ public class main extends ListenerAdapter{
 		messageListener.addListener();
 		
 		Timer timer = new Timer();
-		timer.schedule(lastPublished, 0, 1000);
+		timer.schedule(lastPublished, 0, 900000);
 		 
 		statusFrame frame = new statusFrame(jda);
 
     }
-
-
 }

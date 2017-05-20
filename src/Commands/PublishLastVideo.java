@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,6 +60,9 @@ public class PublishLastVideo extends TimerTask{
 
 	@Override
 	public void run() {
+		String hour = Integer.toString(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+		hour+=":"+Integer.toString(Calendar.getInstance().get(Calendar.MINUTE));
+		hour+=":"+Integer.toString(Calendar.getInstance().get(Calendar.SECOND));
 		URL url;
 		InputStream lastVideo;
 		for(String id : this.channelsId){
@@ -72,7 +76,7 @@ public class PublishLastVideo extends TimerTask{
 					this.setVideoId(tmp);
 				}
 			} catch (IOException e) {
-				System.out.println("URL could not be read");
+				System.out.println(String.format("[%s] [Error] The URL failed to return a result, or your request to the Google Youtupe API get rejected", hour));
 			} 
 		}		
 	}
