@@ -1,25 +1,19 @@
 package Commands;
-import java.io.IOException;
 
-import net.dv8tion.jda.client.events.call.CallCreateEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.DisconnectEvent;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ReconnectedEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.user.UserGameUpdateEvent;
-import net.dv8tion.jda.core.events.user.UserOnlineStatusUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
-public class MessageListenerActions extends ListenerAdapter{
+public class MessageListenerActions extends ListenerAdapter implements PropertyChangeListener{
 
 	private boolean relou = false;
 	private JDA jda;
@@ -175,6 +169,14 @@ public class MessageListenerActions extends ListenerAdapter{
 		/*else{
 			event.getGuild().getPublicChannel().sendMessage(String.format("%s s'appelle désormais %s !", event.getMember().getEffectiveName(), event.getNewNick())).complete();
 		}*/
+		
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if(event.getPropertyName().equals("VideoId")){
+			jda.getGuildById("311953226851155968").getPublicChannel().sendMessage("Une nouvelle vidéo est sortie !: https://youtube.com/watch?v="+event.getNewValue()).complete();
+		}
 		
 	}
 	
