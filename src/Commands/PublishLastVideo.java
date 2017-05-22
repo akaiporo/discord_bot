@@ -3,6 +3,8 @@ package Commands;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,22 +17,25 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimerTask;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 
 
 public class PublishLastVideo extends TimerTask{
 	private static final String PROPERTIES_FILENAME = "youtube.properties";
+	private static final String CHANNELSID_FILENAME = "channelsId.json";
 	private String apiKey;
 	private String lastVideoId;
 	private List<String> channelsId = new ArrayList<String>();
 	JsonParser parser = new JsonParser();
 	protected PropertyChangeSupport propertyChangeSupport;
 
-	public PublishLastVideo(){
+	public PublishLastVideo() throws JsonIOException, JsonSyntaxException, FileNotFoundException{
 		
 		propertyChangeSupport = new PropertyChangeSupport(this);
 		
@@ -44,7 +49,7 @@ public class PublishLastVideo extends TimerTask{
                     + " : " + e.getMessage());
         }
         this.apiKey = properties.getProperty("youtube.apikey");
-        this.channelsId.add("UC-iZs55_7agxY5s4I-slhmw"); //soulnSane channel id
+        this.getChannelsId(parser.parse(new JsonReader(new FileReader(CHANNELSID_FILENAME))).getAsJsonObject());
  
 	}
 	
@@ -73,6 +78,7 @@ public class PublishLastVideo extends TimerTask{
 				JsonObject json = result.getAsJsonObject();
 				String tmp  = this.iterateOverJson(json.entrySet());
 				if(!tmp.equals(this.lastVideoId)){
+					System.out.println(lastVideoId+", new : "+tmp);
 					this.setVideoId(tmp);
 				}
 			} catch (IOException e) {
@@ -100,6 +106,19 @@ public class PublishLastVideo extends TimerTask{
 		}
 		
 		return videoId;
+	}
+	/**
+	 * Récupère les id des chaines youtubes dans le fichier JSON
+	 * @param ids : Json Object contenant les datas du fichier json
+	 */
+	private void getChannelsId(JsonObject ids){
+		Set<Entry<String, JsonElement>> entrySet = ids.entrySet();
+		for(Map.Entry<String, JsonElement> entry : entrySet){
+			JsonArray json = entry.getValue().getAsJsonArray(); 
+			for(JsonElement je : json){
+				this.channelsId.add(je.getAsString());
+			}
+		}
 	}
 
 }

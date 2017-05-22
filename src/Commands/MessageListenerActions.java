@@ -2,7 +2,23 @@ package Commands;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
+
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -10,6 +26,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
@@ -18,6 +35,7 @@ public class MessageListenerActions extends ListenerAdapter implements PropertyC
 	private boolean relou = false;
 	private JDA jda;
 	private String botname;
+	private static final String CHANNELSID_FILENAME = "channelsId.json";
 	
 	public MessageListenerActions(JDA jda){
 		if(this.jda == null){
@@ -180,16 +198,38 @@ public class MessageListenerActions extends ListenerAdapter implements PropertyC
 		
 	}
 	
-	/**
-	 * Ça marche ! Mais bon. On flic pas, hein ? 
-	 */
 	/*@Override
-	public void onUserOnlineStatusUpdate(UserOnlineStatusUpdateEvent event) {
-		if(event.getPreviousOnlineStatus() == OnlineStatus.OFFLINE){
-			event.getGuild().getPublicChannel().sendMessage(String.format("%s s'est connecté !",event.getUser().getName())).complete();
+	public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
+		if(event.getAuthor().getMutualGuilds().contains(this.jda.getGuildById("311953226851155968"))){
+			if(jda.getGuildById("311953226851155968").getMember(event.getAuthor()).getPermissions().contains(Permission.ADMINISTRATOR)){
+				if(event.getMessage().getContent().contains("/add ")){
+					String id = event.getMessage().getContent().substring(5);
+					try {
+						this.setChannelsId(new JsonParser().parse(new JsonReader(new FileReader(CHANNELSID_FILENAME))).getAsJsonObject(), id);
+					} catch (JsonIOException e) {
+						
+						e.printStackTrace();
+					} catch (JsonSyntaxException e) {
+					
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			else{
+				event.getAuthor().getPrivateChannel().sendMessage("Seul l'administrateur de votre serveur peut me parler.").complete();
+			}
 		}
-		else if(event.getPreviousOnlineStatus() == OnlineStatus.ONLINE){
-			event.getGuild().getPublicChannel().sendMessage(String.format("%s s'est déconnecté !",event.getUser().getName())).complete();
+	}
+	
+	private void setChannelsId(JsonObject ids, String id){
+		Set<Entry<String, JsonElement>> entrySet = ids.entrySet();
+		for(Map.Entry<String, JsonElement> entry : entrySet){
+			JsonArray json = entry.getValue().getAsJsonArray(); 
+			entry.setValue();
 		}
 	}*/
 }
